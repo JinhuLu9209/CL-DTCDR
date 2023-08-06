@@ -158,8 +158,7 @@ class Model:
         return np.array(embedding)
 
     def add_side_embedding(self, dataS, dataT, emb_S, shape):
-        with open('./correlation_' + str(dataS) + '2' + str(dataT) + "_VSize_" + str(self.KSize) + '.pkl',
-                  'rb') as f:
+        with open('./correlation_' + str(dataS) + '2' + str(dataT) + "_VSize_" + str(self.KSize) + '.pkl', 'rb') as f:
             simDict = pickle.load(f)
         user_side_emb = []
         for i in range(shape[0]):
@@ -224,13 +223,10 @@ class Model:
     def create_cross_entropy_loss(self, u_embeddings, i_embeddings, rate, maxRate):
         user_out = u_embeddings
         item_out = i_embeddings
-        norm_user_output = tf.sqrt(
-            tf.reduce_sum(tf.square(user_out), axis=1))
-        norm_item_output = tf.sqrt(
-            tf.reduce_sum(tf.square(item_out), axis=1))
+        norm_user_output = tf.sqrt(tf.reduce_sum(tf.square(user_out), axis=1))
+        norm_item_output = tf.sqrt(tf.reduce_sum(tf.square(item_out), axis=1))
         regularizer = tf.nn.l2_loss(user_out) + tf.nn.l2_loss(item_out)
-        predict = tf.reduce_sum(tf.multiply(user_out, item_out), axis=1, keepdims=False) / (
-                norm_item_output * norm_user_output)
+        predict = tf.reduce_sum(tf.multiply(user_out, item_out), axis=1, keepdims=False) / (norm_item_output * norm_user_output)
         predict = tf.maximum(1e-6, predict)
         # predict = tf.reduce_sum(tf.multiply(user_out_B, item_out_B), axis=1, keepdims=False)
         regRate = rate / maxRate
@@ -258,8 +254,7 @@ class Model:
         item_emb2 = tf.nn.embedding_lookup(doc_feature, shape[0] + item)
         normalize_item_emb1 = tf.nn.l2_normalize(item_emb1, 1)
         normalize_item_emb2 = tf.nn.l2_normalize(item_emb2, 1)
-        normalize_all_item_emb2 = tf.nn.l2_normalize(doc_feature[shape[0]:shape[0] + shape[1]],
-                                                     1)
+        normalize_all_item_emb2 = tf.nn.l2_normalize(doc_feature[shape[0]:shape[0] + shape[1]], 1)
         pos_score_item = tf.reduce_sum(tf.multiply(normalize_item_emb1, normalize_item_emb2), axis=1)
         ttl_score_item = tf.matmul(normalize_item_emb1, normalize_all_item_emb2, transpose_a=False, transpose_b=True)
         pos_score_item = tf.exp(pos_score_item / self.ssl_temp)
@@ -484,7 +479,7 @@ class Model:
 
 if __name__ == '__main__':
     tasks = [['amazon_movie', 'amazon_book'], ['amazon_movie', 'amazon_cd']]
-    topList = [10]
+    topList = [1, 5, 10]
     for topK in topList:
         for [domain_A, domain_B] in tasks:
             main(domain_A, domain_B, 64, topK)

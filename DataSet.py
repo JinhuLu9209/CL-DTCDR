@@ -6,8 +6,8 @@ import pandas as pd
 class DataSet(object):
     def __init__(self, fileName):
         self.fileName = fileName
-        self.user_pool = set()
-        self.item_pool = set()
+        # self.user_pool = set()
+        # self.item_pool = set()
         self.data, self.shape = self.getData(fileName)
         self.train, self.test = self.getTrainTest()
         self.trainDict = self.getDataDict(self.train)
@@ -27,8 +27,8 @@ class DataSet(object):
             rate = float(row.rate)
             time = float(row.time)
             # rate = float(1.0)
-            self.user_pool.add(user)
-            self.item_pool.add(item)
+            # self.user_pool.add(user)
+            # self.item_pool.add(item)
             data.append((user, item, rate, time))
         print("Loading Success!\n"
               "Data Info:\n"
@@ -81,8 +81,7 @@ class DataSet(object):
             neglist.add(i[1])
             for t in range(negNum):
                 j = np.random.randint(self.shape[1])
-                while (i[0], j) in self.trainDict or (
-                        i[0], j) in self.testDict or j not in self.item_pool or j in neglist:
+                while (i[0], j) in self.trainDict or (i[0], j) in self.testDict or j in neglist:
                     j = np.random.randint(self.shape[1])
                 neglist.add(j)
                 user.append(i[0])
@@ -104,7 +103,7 @@ class DataSet(object):
             neglist.add(i)
             for t in range(negNum):
                 j = np.random.randint(self.shape[1])
-                while (u, j) in self.trainDict or j not in self.item_pool or j in neglist:
+                while (u, j) in self.trainDict or j in neglist:
                     j = np.random.randint(self.shape[1])
                 neglist.add(j)
                 tmp_user.append(u)
